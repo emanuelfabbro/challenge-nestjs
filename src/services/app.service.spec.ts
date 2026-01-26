@@ -17,6 +17,8 @@ describe('AppService', () => {
   });
 
   it('should return a welcome message', () => {
-    expect(service.getWelcomeMessage()).toBe('Welcome to NestJS MVC Application!');
+    expect(service.getWelcomeMessage()).toBe(
+      'Welcome to NestJS MVC Application!',
+    );
   });
 });
