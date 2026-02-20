@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 
@@ -17,17 +17,26 @@ export class RolesGuard implements CanActivate {
         }
 
         const request = context.switchToHttp().getRequest();
+        const authHeader = request.headers.authorization;
 
-        const userRole = request.headers['x-role'];
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new UnauthorizedException('Token de autorización (Bearer) no proporcionado');
+        }
 
-        if (!userRole) {
-            throw new UnauthorizedException('Debes enviar el header "x-role"');
+        const token = authHeader.split(' ')[1];
+
+        let userRole = 'guest';
+        if (token === 'admin-secret-token-123') {
+            userRole = 'admin';
+        } else if (token === 'user-secret-token-456') {
+            userRole = 'user';
+        } else {
+            throw new UnauthorizedException('Token inválido o expirado');
         }
 
         const hasRole = requiredRoles.includes(userRole);
-
         if (!hasRole) {
-            throw new UnauthorizedException('No tienes permisos suficientes (Role requerido: admin)');
+            throw new ForbiddenException(`No tienes permisos suficientes. Requerido: ${requiredRoles.join(', ')}`);
         }
 
         return true;

@@ -4,7 +4,7 @@ import { CreateUserDto } from './model/dto/create-user.dto';
 import { UpdateUserDto } from './model/dto/update-user.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { ApiTags, ApiOperation, ApiQuery, ApiHeader } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('users')
 @Controller('users')
@@ -40,11 +40,7 @@ export class UsersController {
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar usuario' })
     @Roles('admin')
-    @ApiHeader({
-        name: 'x-role',
-        description: 'Rol del usuario (ej: user, admin)',
-        required: true,
-    })
+    @ApiBearerAuth()
     remove(@Param('id', ParseUUIDPipe) id: string) {
         return this.usersService.remove(id);
     }

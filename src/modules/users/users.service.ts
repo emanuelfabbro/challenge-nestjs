@@ -1,52 +1,24 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
-import { User } from './model/entity/user.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UsersRepository } from './model/repository/users.repository';
 import { CreateUserDto } from './model/dto/create-user.dto';
 import { UpdateUserDto } from './model/dto/update-user.dto';
+import { User } from './model/entity/user.entity';
 
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-    ) { }
+    constructor(private readonly usersRepository: UsersRepository) { }
 
     async create(createUserDto: CreateUserDto): Promise<User> {
-        const existingUser = await this.userRepository.findOne({
-            where: { email: createUserDto.email },
-        });
-
-        if (existingUser) {
-            throw new BadRequestException('El correo electrónico ya está registrado.');
-        }
-
-        const user = this.userRepository.create(createUserDto);
-        return await this.userRepository.save(user);
+        // La validación de duplicados ahora la maneja la BD y el repositorio lo atrapa
+        return this.usersRepository.create(createUserDto);
     }
 
     async findAll(term?: string): Promise<User[]> {
-        if (term) {
-            return await this.userRepository.find({
-                where: [
-                    { nombre: Like(`%${term}%`) },
-                    { email: Like(`%${term}%`) },
-                ],
-                relations: ['profile'],
-            });
-        }
-
-        return await this.userRepository.find({
-            relations: ['profile'],
-        });
+        return this.usersRepository.findAll(term);
     }
 
     async findOne(id: string): Promise<User> {
-        const user = await this.userRepository.findOne({
-            where: { id },
-            relations: ['profile'],
-        });
-
+        const user = await this.usersRepository.findOne(id);
         if (!user) {
             throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
         }
@@ -54,24 +26,11 @@ export class UsersService {
     }
 
     async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        const user = await this.userRepository.preload({
-            id: id,
-            ...updateUserDto,
-        });
-
-        if (!user) {
-            throw new NotFoundException(`Usuario con ID ${id} no encontrado`);
-        }
-
-        try {
-            return await this.userRepository.save(user);
-        } catch (error) {
-            throw new BadRequestException('Error al actualizar: Verifique los datos');
-        }
+        return this.usersRepository.update(id, updateUserDto);
     }
 
     async remove(id: string): Promise<void> {
-        const user = await this.findOne(id);
-        await this.userRepository.remove(user);
+        const user = await this.findOne(id); // Reutilizamos el método para validar existencia
+        await this.usersRepository.remove(user);
     }
 }

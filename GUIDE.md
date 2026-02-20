@@ -48,9 +48,7 @@ Para cumplir el requisito de "Manejo de permisos" en el borrado de usuarios:
 
 Implementación: Se creó un Guard personalizado (RolesGuard) y un decorador (@Roles).
 
-Flujo: El endpoint DELETE verifica la existencia de un header x-role: admin.
-
-Por qué: Es una solución ligera y modular que demuestra el conocimiento de los Interceptors y Guards de NestJS sin la sobreingeniería de implementar un sistema completo de JWT/Auth0 para una prueba técnica de alcance limitado.
+Flujo: El endpoint DELETE verifica la existencia de un bearer token: admin-secret-token-123.
 
 # Estrategia de Contenerización (Docker)
 Se diseñó un Dockerfile utilizando Multi-stage builds:

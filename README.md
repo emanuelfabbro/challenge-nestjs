@@ -77,7 +77,7 @@ POST /users: Crear usuario y perfil.
 
 GET /users?term=...: Listar usuarios (con filtro opcional).
 
-DELETE /users/:id: Eliminar usuario (Requiere header x-role: admin).
+DELETE /users/:id: Eliminar usuario (Requiere bearer token: admin-secret-token-123).
 
 # Estructura del Proyecto
 Consulta el archivo GUIDE.md para una explicación detallada de la arquitectura y decisiones técnicas.
