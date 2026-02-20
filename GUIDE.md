@@ -62,8 +62,8 @@ Resultado: Una imagen final ligera, segura y lista para producción, eliminando 
 # Estrategia de Testing
 Las pruebas se movieron a la carpeta test/ para mantener limpio el src/.
 
-# Unit Testing: Se realizaron pruebas aisladas para Service y Controller utilizando Jest.
+Unit Testing: Se realizaron pruebas aisladas para Service y Controller utilizando Jest.
 
-# Mocking: Se simularon todas las dependencias externas (Repositorios) para asegurar que los tests sean rápidos y deterministas.
+Mocking: Se simularon todas las dependencias externas (Repositorios) para asegurar que los tests sean rápidos y deterministas.
 
-# Cobertura: Se alcanzó >80% de cobertura cubriendo "caminos felices", manejo de errores y casos de borde (ej. filtros de búsqueda).
+Cobertura: Se alcanzó >60% de cobertura cubriendo "caminos felices", manejo de errores y casos de borde (ej. filtros de búsqueda).
